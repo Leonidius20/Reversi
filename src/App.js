@@ -1,5 +1,5 @@
 import logo from './logo.svg';
-import { Game } from './view/game'
+import { Game } from './ui/game'
 import './App.css';
 import React from "react";
 
