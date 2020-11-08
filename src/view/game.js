@@ -3,6 +3,8 @@ import './game.css'
 
 const BLACK = 'black';
 const WHITE = 'white';
+const AVAILABLE = 'available';
+const TIE = 'tie';
 
 class Game extends React.Component {
     render() {
@@ -29,6 +31,28 @@ class Board extends React.Component {
         };
     }
 
+    calculateWinner() {
+        let white = 0;
+        let black = 0;
+        for (let i = 0; i < 8; i++) {
+            for (let j = 0; j < 8; j++) {
+                switch (this.state.cells[i][j]) {
+                    case WHITE:
+                        white++;
+                        break;
+                    case BLACK:
+                        black++;
+                        break;
+                    default:
+                        return null;
+                }
+            }
+        }
+        if (white === black) return TIE;
+        if (white > black) return WHITE;
+        else return BLACK;
+    }
+
     renderCell(row, column) {
         return <Cell value={this.state.cells[row][column]}
                      onClick={() => this.handleClick(row, column)} key={`${row}_${column}`}/>;
@@ -43,7 +67,7 @@ class Board extends React.Component {
     }
 
     handleClick(row, column) {
-        if (this.state.cells[row][column] != null) return;
+        if (this.state.cells[row][column] != null || this.calculateWinner() != null) return;
         const cells = this.state.cells.slice();
         cells[row][column] = this.state.currentPlayer === BLACK ? BLACK : WHITE;
         this.setState({
@@ -53,7 +77,14 @@ class Board extends React.Component {
     }
 
     render() {
-        const text = 'Next player: ' + (this.state.currentPlayer === BLACK ? 'black' : 'white');
+        const winner = this.calculateWinner();
+        let text;
+        if (winner) {
+            if (winner === TIE) text = 'Tie';
+            else text = 'Winner: ' + winner;
+        } else {
+            text = 'Next player: ' + (this.state.currentPlayer === BLACK ? 'black' : 'white');
+        }
 
         const rows = [];
         for (let i = 0; i < this.state.cells.length; i++) {
