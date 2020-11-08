@@ -56,4 +56,30 @@ class CheckHandler {
 
 }
 
-export { DIRECTIONS, iterateCells, CheckHandler };
+class FlipHandler {
+    myColor;
+    otherColor;
+    flip = false;
+    piecesToFlip = [];
+
+    constructor(myColor) {
+        this.myColor = myColor;
+        this.otherColor = myColor === WHITE ? BLACK : WHITE;
+    }
+
+    handleCell(x, y, value) {
+        if (value === this.otherColor) {
+            this.piecesToFlip.push({x, y});
+            return true;
+        }
+        if (value === this.myColor) {
+            this.flip = true;
+            return false;
+        }
+        if (value == null) {
+            return false;
+        }
+    }
+}
+
+export { DIRECTIONS, iterateCells, CheckHandler, FlipHandler };

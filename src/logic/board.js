@@ -1,6 +1,6 @@
 import React from 'react'
 import { RenderBoard } from "../ui/game";
-import {CheckHandler, DIRECTIONS, iterateCells} from "./board_iterators";
+import {CheckHandler, FlipHandler, DIRECTIONS, iterateCells} from "./board_iterators";
 
 const BLACK = 'black';
 const WHITE = 'white';
@@ -16,6 +16,10 @@ class Board extends React.Component {
         for (let i = 0; i < 8; i++) {
             cellsArray[i] = Array(8).fill(null);
         }
+        cellsArray[3][3] = BLACK;
+        cellsArray[4][4] = BLACK;
+        cellsArray[3][4] = WHITE;
+        cellsArray[4][3] = WHITE;
 
         this.state = {
             cells: cellsArray,
@@ -45,10 +49,32 @@ class Board extends React.Component {
         else return BLACK;
     }
 
+    isLegalClick(row, column) {
+        for (const legalCell of this.legalCells) {
+            if (legalCell.x === row && legalCell.y === column) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     handleClick = (row, column) => {
-        if (this.state.cells[row][column] != null || this.calculateWinner() != null) return;
+        if (this.state.cells[row][column] != null
+            || this.calculateWinner() != null || !this.isLegalClick(row, column)) return;
         const cells = this.state.cells.slice();
         cells[row][column] = this.state.currentPlayer === BLACK ? BLACK : WHITE;
+
+        // flipping pieces
+        for (const direction of DIRECTIONS) {
+            const handler = new FlipHandler(this.state.currentPlayer);
+            iterateCells(cells, {x: row, y: column}, direction, handler);
+            if (handler.flip) {
+                for (const piece of handler.piecesToFlip) {
+                    cells[piece.x][piece.y] = this.state.currentPlayer;
+                }
+            }
+        }
+
         this.setState({
             cells: cells,
             currentPlayer: this.state.currentPlayer === BLACK ? WHITE : BLACK,
@@ -72,7 +98,6 @@ class Board extends React.Component {
                 }
             }
         }
-        console.log(cells);
         return cells;
     }
 
@@ -81,7 +106,7 @@ class Board extends React.Component {
             winner={this.calculateWinner()}
             currentPlayer={this.state.currentPlayer}
             cells={this.state.cells}
-            legalCells={this.getLegalCells()}
+            legalCells={this.legalCells = this.getLegalCells()}
             handleClick={this.handleClick}/>;
     }
 }
