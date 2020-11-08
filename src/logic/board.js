@@ -1,10 +1,13 @@
 import React from 'react'
 import { RenderBoard } from "../ui/game";
+import {CheckHandler, DIRECTIONS, iterateCells} from "./board_iterators";
 
 const BLACK = 'black';
 const WHITE = 'white';
 const AVAILABLE = 'available';
 const TIE = 'tie';
+
+export { BLACK, WHITE };
 
 class Board extends React.Component {
     constructor(props) {
@@ -52,11 +55,33 @@ class Board extends React.Component {
         });
     }
 
+    // cells which can be taken in the next move
+    getLegalCells() {
+        const cells = [];
+        for (let x = 0; x < 8; x++) {
+            for (let y = 0; y < 8; y++) {
+                // only start iterating from taken spots
+                if (this.state.cells[x][y] === this.state.currentPlayer) {
+
+                    // iterate in all directions
+                    for (const direction of DIRECTIONS) {
+                        const handler = new CheckHandler(this.state.currentPlayer);
+                        iterateCells(this.state.cells, {x, y}, direction, handler);
+                        if (handler.isValidMove()) cells.push(handler.endPoint);
+                    }
+                }
+            }
+        }
+        console.log(cells);
+        return cells;
+    }
+
     render() {
         return <RenderBoard
             winner={this.calculateWinner()}
             currentPlayer={this.state.currentPlayer}
             cells={this.state.cells}
+            legalCells={this.getLegalCells()}
             handleClick={this.handleClick}/>;
     }
 }

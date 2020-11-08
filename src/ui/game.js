@@ -21,7 +21,18 @@ class Game extends React.Component {
 class RenderBoard extends React.Component {
 
     renderCell(row, column) {
-        return <Cell value={this.props.cells[row][column]}
+        let value;
+        let isLegal = false;
+        for (const legalCell of this.props.legalCells) {
+            if (legalCell.x === row && legalCell.y === column) {
+                isLegal = true;
+                value = AVAILABLE;
+                break;
+            }
+        }
+        if (!isLegal) value = this.props.cells[row][column];
+
+        return <Cell value={value}
                      onClick={() => this.props.handleClick(row, column)} key={`${row}_${column}`}/>;
     }
 
@@ -67,6 +78,9 @@ function Cell(props) {
             break;
         case BLACK:
             buttonClass = 'board-cell-black';
+            break;
+        case AVAILABLE:
+            buttonClass = 'board-cell-available';
             break;
         default:
             buttonClass = 'board-cell';
