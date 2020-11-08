@@ -1,6 +1,9 @@
 import React from 'react'
 import './game.css'
 
+const BLACK = 'black';
+const WHITE = 'white';
+
 class Game extends React.Component {
     render() {
         return (
@@ -20,7 +23,10 @@ class Board extends React.Component {
             cellsArray[i] = Array(8).fill(null);
         }
 
-        this.state = {cells: cellsArray};
+        this.state = {
+            cells: cellsArray,
+            currentPlayer: BLACK,
+        };
     }
 
     renderCell(row, column) {
@@ -37,13 +43,17 @@ class Board extends React.Component {
     }
 
     handleClick(row, column) {
+        if (this.state.cells[row][column] != null) return;
         const cells = this.state.cells.slice();
-        cells[row][column] = 'X';
-        this.setState({cells: cells});
+        cells[row][column] = this.state.currentPlayer === BLACK ? BLACK : WHITE;
+        this.setState({
+            cells: cells,
+            currentPlayer: this.state.currentPlayer === BLACK ? WHITE : BLACK,
+        });
     }
 
     render() {
-        const text = 'Next player: X';
+        const text = 'Next player: ' + (this.state.currentPlayer === BLACK ? 'black' : 'white');
 
         const rows = [];
         for (let i = 0; i < this.state.cells.length; i++) {
@@ -62,9 +72,22 @@ class Board extends React.Component {
 }
 
 function Cell(props) {
+    let buttonClass;
+    switch (props.value) {
+        case WHITE:
+            buttonClass = 'board-cell-white';
+            break;
+        case BLACK:
+            buttonClass = 'board-cell-black';
+            break;
+        default:
+            buttonClass = 'board-cell';
+            break;
+    }
+
     return (
-        <button className="board-cell" onClick={props.onClick}>
-            {props.value}
+        <button className={buttonClass} onClick={props.onClick}>
+
         </button>
     );
 }
