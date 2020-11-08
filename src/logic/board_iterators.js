@@ -52,8 +52,6 @@ class CheckHandler {
         return this.hasOtherPieces && this.endsWithEmptySpace;
     }
 
-
-
 }
 
 class FlipHandler {

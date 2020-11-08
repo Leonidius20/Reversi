@@ -25,6 +25,8 @@ class Board extends React.Component {
             cells: cellsArray,
             currentPlayer: BLACK,
         };
+
+        this.legalCells = this.getLegalCells(this.state.currentPlayer);
     }
 
     calculateWinner() {
@@ -75,6 +77,8 @@ class Board extends React.Component {
             }
         }
 
+        this.legalCells = this.getLegalCells(this.state.currentPlayer === BLACK ? WHITE : BLACK)
+
         this.setState({
             cells: cells,
             currentPlayer: this.state.currentPlayer === BLACK ? WHITE : BLACK,
@@ -82,16 +86,16 @@ class Board extends React.Component {
     }
 
     // cells which can be taken in the next move
-    getLegalCells() {
+    getLegalCells(player) {
         const cells = [];
         for (let x = 0; x < 8; x++) {
             for (let y = 0; y < 8; y++) {
                 // only start iterating from taken spots
-                if (this.state.cells[x][y] === this.state.currentPlayer) {
+                if (this.state.cells[x][y] === player) {
 
                     // iterate in all directions
                     for (const direction of DIRECTIONS) {
-                        const handler = new CheckHandler(this.state.currentPlayer);
+                        const handler = new CheckHandler(player);
                         iterateCells(this.state.cells, {x, y}, direction, handler);
                         if (handler.isValidMove()) cells.push(handler.endPoint);
                     }
@@ -102,11 +106,12 @@ class Board extends React.Component {
     }
 
     render() {
+        // TODO: what if there are no available moves for 1 player or for both
         return <RenderBoard
             winner={this.calculateWinner()}
             currentPlayer={this.state.currentPlayer}
             cells={this.state.cells}
-            legalCells={this.legalCells = this.getLegalCells()}
+            legalCells={this.legalCells}
             handleClick={this.handleClick}/>;
     }
 }
