@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/Reversi/static/css/main.8caded50.chunk.css",
+    "main.js": "/Reversi/static/js/main.e6f06800.chunk.js",
+    "main.js.map": "/Reversi/static/js/main.e6f06800.chunk.js.map",
+    "runtime-main.js": "/Reversi/static/js/runtime-main.34ec1c2d.js",
+    "runtime-main.js.map": "/Reversi/static/js/runtime-main.34ec1c2d.js.map",
+    "static/js/2.c9c30ead.chunk.js": "/Reversi/static/js/2.c9c30ead.chunk.js",
+    "static/js/2.c9c30ead.chunk.js.map": "/Reversi/static/js/2.c9c30ead.chunk.js.map",
+    "static/js/3.6f6d1b8b.chunk.js": "/Reversi/static/js/3.6f6d1b8b.chunk.js",
+    "static/js/3.6f6d1b8b.chunk.js.map": "/Reversi/static/js/3.6f6d1b8b.chunk.js.map",
+    "index.html": "/Reversi/index.html",
+    "static/css/main.8caded50.chunk.css.map": "/Reversi/static/css/main.8caded50.chunk.css.map",
+    "static/js/2.c9c30ead.chunk.js.LICENSE.txt": "/Reversi/static/js/2.c9c30ead.chunk.js.LICENSE.txt",
+    "static/media/logo.103b5fa1.svg": "/Reversi/static/media/logo.103b5fa1.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.34ec1c2d.js",
+    "static/js/2.c9c30ead.chunk.js",
+    "static/css/main.8caded50.chunk.css",
+    "static/js/main.e6f06800.chunk.js"
+  ]
+}
