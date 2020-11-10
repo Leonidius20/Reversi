@@ -27,6 +27,21 @@ class Board extends React.Component {
         };
 
         this.legalCells = this.getLegalCells(this.state.currentPlayer);
+
+        this.consecutivePasses = 0;
+    }
+
+    gameHasEnded() {
+        if (this.consecutivePasses === 2) return true;
+
+        for (let i = 0; i < 8; i++) {
+            for (let j = 0; j < 8; j++) {
+                if (this.state.cells[i][j] == null) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 
     calculateWinner() {
@@ -42,7 +57,7 @@ class Board extends React.Component {
                         black++;
                         break;
                     default:
-                        return null;
+                        break;
                 }
             }
         }
@@ -60,28 +75,101 @@ class Board extends React.Component {
         return false;
     }
 
+    // player's move
     handleClick = (row, column) => {
         if (this.state.cells[row][column] != null
-            || this.calculateWinner() != null || !this.isLegalClick(row, column)) return;
+            || !this.isLegalClick(row, column)
+            || this.state.currentPlayer !== BLACK
+            || this.state.pass === true
+            || this.gameHasEnded()) return;
+
+        this.consecutivePasses = 0;
+
+        this.makeMove(BLACK, row, column);
+
+        setTimeout(() => this.computerMove(), 2000);
+    }
+
+    computerMove() {
+        this.legalCells = []; // so that legal cells are not rendered
+
+        this.setState({
+            cells: this.state.cells,
+            currentPlayer: WHITE,
+            pass: false,
+        });
+
+        const legalMoves = this.getLegalCells(WHITE);
+
+        if (legalMoves.length === 0) { // there are no legal moves, passing
+            this.setState({
+                cells: this.state.cells,
+                currentPlayer: WHITE,
+                pass: true,
+            });
+            this.consecutivePasses++;
+            setTimeout(() => {
+                this.setState({
+                    cells: this.state.cells,
+                    currentPlayer: BLACK,
+                    pass: false,
+                });
+            }, 2000);
+        } else {
+            this.consecutivePasses = 0;
+
+            const move = legalMoves[Math.floor(Math.random() * legalMoves.length)];
+
+            this.makeMove(WHITE, move.x, move.y);
+        }
+
+        this.setState({
+            cells: this.state.cells,
+            currentPlayer: BLACK,
+            pass: false,
+        });
+
+        this.prepareForHumanMove();
+    }
+
+    prepareForHumanMove() {
+        this.legalCells = this.getLegalCells(BLACK);
+
+        if (this.legalCells.length === 0) {
+            this.setState({
+                cells: this.state.cells,
+                currentPlayer: BLACK,
+                pass: true,
+            });
+            this.consecutivePasses++;
+            setTimeout(() => {
+                this.computerMove();
+            }, 2000);
+        }
+    }
+
+    makeMove(player, row, column) {
         const cells = this.state.cells.slice();
-        cells[row][column] = this.state.currentPlayer === BLACK ? BLACK : WHITE;
+        cells[row][column] = player;
 
         // flipping pieces
         for (const direction of DIRECTIONS) {
-            const handler = new FlipHandler(this.state.currentPlayer);
+            const handler = new FlipHandler(player);
             iterateCells(cells, {x: row, y: column}, direction, handler);
             if (handler.flip) {
                 for (const piece of handler.piecesToFlip) {
-                    cells[piece.x][piece.y] = this.state.currentPlayer;
+                    cells[piece.x][piece.y] = player;
                 }
             }
         }
 
-        this.legalCells = this.getLegalCells(this.state.currentPlayer === BLACK ? WHITE : BLACK)
+        // preparing for the next move
+        this.legalCells = player === BLACK ? [] : this.getLegalCells(BLACK);
 
         this.setState({
             cells: cells,
-            currentPlayer: this.state.currentPlayer === BLACK ? WHITE : BLACK,
+            currentPlayer: player === BLACK ? WHITE : BLACK,
+            pass: false,
         });
     }
 
@@ -108,8 +196,9 @@ class Board extends React.Component {
     render() {
         // TODO: what if there are no available moves for 1 player or for both
         return <RenderBoard
-            winner={this.calculateWinner()}
+            winner={this.gameHasEnded() ? this.calculateWinner() : null}
             currentPlayer={this.state.currentPlayer}
+            pass={this.state.pass}
             cells={this.state.cells}
             legalCells={this.legalCells}
             handleClick={this.handleClick}/>;

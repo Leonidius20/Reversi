@@ -15,6 +15,7 @@
     outline: black solid 1px;
     border-radius: 50px;
     background-color: white;
+    transition: background-color 2s;
 }
 
 .board-cell-black {
@@ -23,6 +24,7 @@
     outline: black solid 1px;
     border-radius: 50px;
     background-color: black;
+    transition: background-color 2s;
 }
 
 .board-cell-available {

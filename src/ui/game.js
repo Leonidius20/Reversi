@@ -50,7 +50,8 @@ class RenderBoard extends React.Component {
             if (this.props.winner === TIE) text = 'Tie';
             else text = 'Winner: ' + this.props.winner;
         } else {
-            text = 'Next player: ' + (this.props.currentPlayer === BLACK ? 'black' : 'white');
+            if (this.props.pass) text = 'PASS';
+            else text = 'Next player: ' + this.props.currentPlayer;
         }
 
         const rows = [];
