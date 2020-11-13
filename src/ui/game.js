@@ -1,61 +1,84 @@
 import React from 'react'
-import Board from "../logic/board";
+import Board from "../logic/board"
 import './game.css'
+import game, { BLACK, WHITE, getPossibleMoves} from '../logic/game'
 
-const BLACK = 'black';
-const WHITE = 'white';
 const AVAILABLE = 'available';
 const TIE = 'tie';
 
-class Game extends React.Component {
+export class RenderGame extends React.Component {
     render() {
         return (
             <div>
-                <Board/>
-                Something else
+                <Board game={this.props.game}/>
             </div>
         );
     }
 }
 
-class RenderBoard extends React.Component {
+export class RenderBoard extends React.Component {
+
+    handleClick(row, column) {
+        const game = this.props.game;
+        if (game.gameHasEnded()
+            || game.getCurrentPlayer() !== game.blackPlayer
+            || !this.isLegalClick(game, row, column)) return;
+        // TODO: return if pass is happening
+
+        game.blackPlayer.makeMove({x: row, y: column});
+    }
+
+    isLegalClick(game, row, column) {
+        for (const legalCell of getPossibleMoves(game.blackPlayer, game.state.boardState)) {
+            if (legalCell.x === row && legalCell.y === column) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     renderCell(row, column) {
+        const game = this.props.game;
+
         let value;
         let isLegal = false;
-        for (const legalCell of this.props.legalCells) {
+        for (const legalCell of getPossibleMoves(game.blackPlayer, game.state.boardState)) {
             if (legalCell.x === row && legalCell.y === column) {
                 isLegal = true;
                 value = AVAILABLE;
                 break;
             }
         }
-        if (!isLegal) value = this.props.cells[row][column];
+        if (!isLegal) value = game.state.boardState[row][column];
 
         return <Cell value={value}
-                     onClick={() => this.props.handleClick(row, column)} key={`${row}_${column}`}/>;
+                     onClick={() => this.handleClick(row, column)} key={`${row}_${column}`}/>;
     }
 
     renderRow(row) {
         const cells = [];
-        for (let i = 0; i < this.props.cells[row].length; i++) {
+        for (let i = 0; i < this.props.game.state.boardState[row].length; i++) {
             cells.push(this.renderCell(row, i));
         }
         return <div className="board-row" key={row}>{cells}</div>;
     }
 
     render() {
+        const game = this.props.game;
+        const gameState = game.state;
+        const currentPlayer = game.getCurrentPlayer() === game.blackPlayer ? 'black' : 'white';
+
         let text;
-        if (this.props.winner) {
-            if (this.props.winner === TIE) text = 'Tie';
-            else text = 'Winner: ' + this.props.winner;
+        if (gameState.winner) {
+            if (gameState.winner === TIE) text = 'Tie';
+            else text = 'Winner: ' + gameState.winner;
         } else {
-            if (this.props.pass) text = 'PASS';
-            else text = 'Next player: ' + this.props.currentPlayer;
+            if (gameState.pass) text = 'PASS';
+            else text = 'Next player: ' + currentPlayer;
         }
 
         const rows = [];
-        for (let i = 0; i < this.props.cells.length; i++) {
+        for (let i = 0; i < gameState.boardState.length; i++) {
             rows.push(this.renderRow(i));
         }
 
@@ -94,5 +117,3 @@ function Cell(props) {
         </button>
     );
 }
-
-export { Game, RenderBoard };

@@ -10,6 +10,7 @@ const TIE = 'tie';
 export { BLACK, WHITE };
 
 class Board extends React.Component {
+
     constructor(props) {
         super(props);
         const cellsArray = [];

@@ -1,17 +1,19 @@
 import logo from './logo.svg';
-import { Game } from './ui/game'
+import Game, {BLACK, WHITE} from "./logic/game";
 import './App.css';
 import React from "react";
+import {RandomAiPlayer, HumanPlayer} from "./logic/players";
 
-function App() {
+export default function App() {
+    const blackPlayer = new HumanPlayer(BLACK);
+    const whitePlayer = new RandomAiPlayer(WHITE);
+
   return (
     <div className="App">
-      <Game/>
+      <Game blackPlayer={blackPlayer} whitePlayer={whitePlayer}/>
     </div>
   );
 }
-
-export default App;
 
 /*
 <!--<header className="App-header">
