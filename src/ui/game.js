@@ -80,7 +80,12 @@ export class RenderBoard extends React.Component {
             if (gameState.winner === TIE) text = 'Tie';
             else text = 'Winner: ' + gameState.winner;
         } else {
-            if (gameState.pass) text = 'PASS';
+            if (gameState.consecutivePasses !== 0) {
+                // passing
+                const playerWhoPassed = // this is not a typo! prev player passed
+                    game.getCurrentPlayer() === game.blackPlayer ? 'white' : 'black';
+                text = `Player ${playerWhoPassed}: PASS`;
+            }
             else text = 'Next player: ' + currentPlayer;
         }
 

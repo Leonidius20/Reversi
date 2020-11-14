@@ -59,19 +59,32 @@ export default class Game extends React.Component {
         this.forceUpdate();
     }
 
+    async pass() {
+        return new Promise((resolve => {
+            const playerWhoPassed = this.getCurrentPlayer();
+            this.setState((prevState) => {
+                return {
+                    turnCounter: prevState.turnCounter + 1,
+                    consecutivePasses: prevState.consecutivePasses + 1,
+                };
+            });
+            this.forceUpdate();
+            setTimeout(() => resolve(), playerWhoPassed === this.blackPlayer ? 2000 : 0);
+        }));
+    }
+
     async gameLoop() {
         while (!this.isGameFinished()) {
             const player = this.getCurrentPlayer();
             const move = await player.nextMove(this.state.boardState);
-            this.registerMove(player, move);
+            if (move == null) await this.pass();
+            else this.registerMove(player, move);
         }
 
-        this.state = {
-            boardState: this.state.boardState,
-            turnCounter: this.state.turnCounter,
+        this.setState({
             consecutivePasses: 0,
             winner: this.getWinner(),
-        }
+        });
     }
 
     getWinner() {

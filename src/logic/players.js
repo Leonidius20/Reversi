@@ -2,23 +2,22 @@ import { getPossibleMoves } from "./game";
 import { TreeNode, applyMove, utilityFunction } from "./ai";
 
 class Player {
-    constructor(color, isHuman) {
+    constructor(color) {
         this.color = color;
-        this.isHuman = isHuman;
     }
 }
 
 export class HumanPlayer extends Player {
 
-    constructor(color) {
-        super(color, true);
-    }
-
     makeMove(move) {
         this.resolvePromise(move);
     }
 
-    nextMove() {
+    nextMove(boardState) {
+        if (getPossibleMoves(this, boardState).length === 0) {
+            return Promise.resolve(null);
+        }
+
         return new Promise(((resolve) => {
             this.resolvePromise = resolve;
         }));
@@ -26,22 +25,17 @@ export class HumanPlayer extends Player {
 
 }
 
-class AiPlayer extends Player {
-
-    constructor(color) {
-        super(color, false);
-    }
-
-}
+class AiPlayer extends Player {}
 
 export class RandomAiPlayer extends AiPlayer {
 
     nextMove(boardState) {
         const moves = getPossibleMoves(this, boardState);
-        console.log(moves.length);
         return new Promise((resolve) => {
             setTimeout(() => {
-                resolve(moves[Math.floor(Math.random() * moves.length)]);
+                resolve(moves.length === 0
+                    ? null
+                    : moves[Math.floor(Math.random() * moves.length)]);
             }, 2000);
         });
     }
