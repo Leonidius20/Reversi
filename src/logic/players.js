@@ -39,7 +39,11 @@ export class RandomAiPlayer extends AiPlayer {
     nextMove(boardState) {
         const moves = getPossibleMoves(this, boardState);
         console.log(moves.length);
-        return Promise.resolve(moves[Math.floor(Math.random() * moves.length)]);
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(moves[Math.floor(Math.random() * moves.length)]);
+            }, 2000);
+        });
     }
 
 }
