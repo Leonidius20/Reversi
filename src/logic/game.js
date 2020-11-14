@@ -69,7 +69,7 @@ export default class Game extends React.Component {
                 };
             });
             this.forceUpdate();
-            setTimeout(() => resolve(), playerWhoPassed === this.blackPlayer ? 2000 : 0);
+            setTimeout(() => resolve(), 2000);
         }));
     }
 

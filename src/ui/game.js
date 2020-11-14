@@ -84,7 +84,7 @@ export class RenderBoard extends React.Component {
                 // passing
                 const playerWhoPassed = // this is not a typo! prev player passed
                     game.getCurrentPlayer() === game.blackPlayer ? 'white' : 'black';
-                text = `Player ${playerWhoPassed}: PASS`;
+                text = `Player ${playerWhoPassed}: PASS, next player: ${currentPlayer}`;
             }
             else text = 'Next player: ' + currentPlayer;
         }
