@@ -1,5 +1,6 @@
 // thanks https://towardsdatascience.com/create-ai-for-your-own-board-game-from-scratch-minimax-part-2-517e1c1e3362
 import {DIRECTIONS, FlipHandler, iterateCells} from "./board_iterators";
+import {BLACK, WHITE, getPossibleMoves} from "./game";
 
 // is applied to terminal positions to determine their value
 export function utilityFunction(color, boardState) {
@@ -12,14 +13,22 @@ export function utilityFunction(color, boardState) {
     return counter;
 }
 
+function clone2dArray(array) {
+    const result = Array(array.length);
+    for (let i = 0; i < array.length; i++) {
+        result[i] = array[i].slice();
+    }
+    return result;
+}
+
 export function applyMove(boardState, color, move) {
-    const newBoardState = boardState.slice();
+    const newBoardState = clone2dArray(boardState);
     newBoardState[move.x][move.y] = color;
 
     // flipping pieces
     for (const direction of DIRECTIONS) {
         const handler = new FlipHandler(color);
-        iterateCells(newBoardState, move, direction, handler);
+        iterateCells(boardState, move, direction, handler);
         if (handler.flip) {
             for (const piece of handler.piecesToFlip) {
                 newBoardState[piece.x][piece.y] = color;
@@ -28,30 +37,4 @@ export function applyMove(boardState, color, move) {
     }
 
     return newBoardState;
-}
-
-export class TreeNode {
-
-    /**
-     * Node of game tree
-     * @param boardState state of the board at this point (2D array)
-     * @param value cost/fitness of this position
-     */
-    constructor(boardState, value) {
-        this.boardState = boardState;
-        this.value = value;
-    }
-
-    isTerminalState() {
-        for (let i = 0; i < 8; i++) {
-            // if there are empty cells on the board
-            if (this.boardState[i].includes(null)) return true;
-        }
-
-        // TODO: no more moves by either party
-        // possibleMoves(black) && possibleMoves(white) are empty
-
-        return false;
-    }
-
 }

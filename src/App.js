@@ -2,11 +2,11 @@ import logo from './logo.svg';
 import Game, {BLACK, WHITE} from "./logic/game";
 import './App.css';
 import React from "react";
-import {RandomAiPlayer, HumanPlayer} from "./logic/players";
+import {RandomAiPlayer, HumanPlayer, GreedyAiPlayer} from "./logic/players";
 
 export default function App() {
     const blackPlayer = new HumanPlayer(BLACK);
-    const whitePlayer = new RandomAiPlayer(WHITE);
+    const whitePlayer = new GreedyAiPlayer(WHITE);
 
   return (
     <div className="App">

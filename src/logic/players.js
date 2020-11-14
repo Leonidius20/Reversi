@@ -1,5 +1,5 @@
-import { getPossibleMoves } from "./game";
-import { TreeNode, applyMove, utilityFunction } from "./ai";
+import { getPossibleMoves, WHITE, BLACK } from "./game";
+import { applyMove, utilityFunction } from "./ai";
 
 class Player {
     constructor(color) {
@@ -51,35 +51,83 @@ class HeuristicAiPlayer extends AiPlayer {
     }
 
     nextMove(boardState) {
+        //todo replace node with { state, value, move }
         const result = this.minmax(0,
-            new TreeNode(boardState, null), null, this.color);
-        return Promise.resolve(result.move);
+            {
+                boardState: boardState,
+                value: null,
+                move: null,
+            }, this.color);
+
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(result.move);
+            }, 2000);
+        });
     }
 
-    minmax(currentDepth, node, currentMove, currentColor) {
-        if (currentDepth === this.maxDepth || node.isTerminalState()) {
+    // returns the best node with value and move filled
+    minmax(currentDepth, node, currentColor) {
+
+        // todo: actually find min and max values
+        // instead of whatever the hell is going on in here
+        if (currentDepth === this.maxDepth || this.isTerminalState(node)) {
             node.value = this.heuristic(this.color, node.boardState);
-            return { node: node, move: currentMove };
+            return node;
         }
 
-        let bestValue = -1;
+        let bestValue = currentColor === WHITE ? -1 : Infinity;
         let bestNode = null;
         let bestMove = null;
 
-        for (const move of getPossibleMoves(this, node.boardState)) {
+        for (const move of getPossibleMoves({color: currentColor}, node.boardState)) {
             const newBoardState = applyMove(node.boardState, currentColor, move);
-            const newNode = new TreeNode(newBoardState, null);
 
-            const newEvaluatedNode = this.minmax(currentDepth + 1, newNode, !currentColor).node;
+            const newEvaluatedNode = this.minmax(currentDepth + 1, {
+                boardState: newBoardState,
+                value: null,
+                move, // this move is made by alternating players!
+            }, !currentColor);
 
-            if (bestValue < newEvaluatedNode.value) {
+            if ((currentColor === WHITE && bestValue < newEvaluatedNode.value)
+                || (currentColor === BLACK && bestValue > newEvaluatedNode.value)) {
                 bestValue = newEvaluatedNode.value;
                 bestNode = newEvaluatedNode;
                 bestMove = move;
             }
         }
 
-        return { node: bestNode, move: bestMove };
+        if (bestNode === null) {
+            bestNode = node;
+            bestValue = this.heuristic(this.color, node.boardState);
+        }
+
+        bestNode.value = bestValue;
+        bestNode.move = bestMove;
+        return bestNode;
+    }
+
+    isTerminalState(node) {
+        // if there are empty cells on the board
+        let hasEmptyCells = false;
+        for (let i = 0; i < 8; i++) {
+            for (let j = 0; j < 8; j++) {
+                if (node.boardState[i][j] == null) {
+                    hasEmptyCells = true;
+                    break;
+                }
+            }
+            if (hasEmptyCells) break;
+        }
+
+        if (!hasEmptyCells) return true;
+
+        // two consecutive passes
+        /*return getPossibleMoves({color: BLACK}, this.boardState).length === 0
+            && getPossibleMoves({color: WHITE}, this.boardState).length === 0;*/
+
+        // return getPossibleMoves({color: WHITE}, node.boardState).length === 0;
+        return false;
     }
 
 }

@@ -77,6 +77,7 @@ export default class Game extends React.Component {
         while (!this.isGameFinished()) {
             const player = this.getCurrentPlayer();
             const move = await player.nextMove(this.state.boardState);
+            console.log(player, move);
             if (move == null) await this.pass();
             else this.registerMove(player, move);
         }
@@ -133,9 +134,4 @@ export function getPossibleMoves(player, boardState) {
         }
     }
     return possibleMoves;
-}
-
-// utility function (used for terminal positions)
-function finalScore() {
-
 }
