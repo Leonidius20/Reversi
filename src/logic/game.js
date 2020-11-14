@@ -49,17 +49,20 @@ export default class Game extends React.Component {
     }
 
     registerMove(player, move) {
-        this.state = {
-            boardState: applyMove(this.state.boardState, player.color, move),
-            turnCounter: this.state.turnCounter + 1,
-            consecutivePasses: 0,
-        };
+        this.setState((prevState) => {
+            return {
+                boardState: applyMove(prevState.boardState, player.color, move),
+                turnCounter: prevState.turnCounter + 1,
+                consecutivePasses: 0,
+            };
+        });
+        this.forceUpdate();
     }
 
     async gameLoop() {
         while (!this.isGameFinished()) {
             const player = this.getCurrentPlayer();
-            const move = await player.nextMove();
+            const move = await player.nextMove(this.state.boardState);
             this.registerMove(player, move);
         }
 
@@ -76,7 +79,7 @@ export default class Game extends React.Component {
         let black = 0;
         for (let i = 0; i < 8; i++) {
             for (let j = 0; j < 8; j++) {
-                switch (this.state.cells[i][j]) {
+                switch (this.state.boardState[i][j]) {
                     case WHITE:
                         white++;
                         break;
@@ -108,9 +111,10 @@ export function getPossibleMoves(player, boardState) {
 
                 // iterate in all directions
                 for (const direction of DIRECTIONS) {
+
                     const handler = new CheckHandler(player.color);
                     iterateCells(boardState, {x, y}, direction, handler);
-                    if (handler.isValidMove()) possibleMoves.push(handler.endPoint);
+                    if (handler.isValidMove()) possibleMoves.push(handler.getEndPoint());
                 }
             }
         }

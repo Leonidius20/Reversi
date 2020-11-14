@@ -1,6 +1,6 @@
 // thanks https://stackoverflow.com/a/44738696
 
-import { BLACK, WHITE } from "./board";
+import { BLACK, WHITE } from "./game";
 
 const DIRECTIONS = [
     {x: 0, y: 1}, {x: 1, y: 1}, {x: 1, y: 0}, {x: 1, y: -1},
@@ -21,15 +21,12 @@ const iterateCells = (cells, start, direction, handler) => {
 // handler to handle checking
 class CheckHandler {
 
-    myColor;
-    otherColor;
-    hasOtherPieces = false;
-    endsWithEmptySpace = false;
-    endPoint;
-
     constructor(myColor) {
         this.myColor = myColor;
         this.otherColor = myColor === WHITE ? BLACK : WHITE;
+        this.hasOtherPieces = false;
+        this.endsWithEmptySpace = false;
+        this.endPoint = null;
     }
 
     // Returns whether the search in this direction should be continued
@@ -52,17 +49,19 @@ class CheckHandler {
         return this.hasOtherPieces && this.endsWithEmptySpace;
     }
 
+    getEndPoint() {
+        return this.endPoint;
+    }
+
 }
 
 class FlipHandler {
-    myColor;
-    otherColor;
-    flip = false;
-    piecesToFlip = [];
 
     constructor(myColor) {
         this.myColor = myColor;
         this.otherColor = myColor === WHITE ? BLACK : WHITE;
+        this.flip = false;
+        this.piecesToFlip = [];
     }
 
     handleCell(x, y, value) {

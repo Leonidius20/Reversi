@@ -37,7 +37,8 @@ class AiPlayer extends Player {
 export class RandomAiPlayer extends AiPlayer {
 
     nextMove(boardState) {
-        const moves = getPossibleMoves(this.color, boardState);
+        const moves = getPossibleMoves(this, boardState);
+        console.log(moves.length);
         return Promise.resolve(moves[Math.floor(Math.random() * moves.length)]);
     }
 
@@ -67,7 +68,7 @@ class HeuristicAiPlayer extends AiPlayer {
         let bestNode = null;
         let bestMove = null;
 
-        for (const move of getPossibleMoves(this.color, node.boardState)) {
+        for (const move of getPossibleMoves(this, node.boardState)) {
             const newBoardState = applyMove(node.boardState, currentColor, move);
             const newNode = new TreeNode(newBoardState, null);
 

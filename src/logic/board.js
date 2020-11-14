@@ -1,4 +1,4 @@
-import React from 'react'
+/*import React from 'react'
 import { RenderBoard } from "../ui/game";
 import {CheckHandler, FlipHandler, DIRECTIONS, iterateCells} from "./board_iterators";
 
@@ -206,4 +206,4 @@ class Board extends React.Component {
     }
 }
 
-export default Board;
+export default Board;*/

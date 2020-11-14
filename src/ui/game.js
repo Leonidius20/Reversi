@@ -1,7 +1,6 @@
 import React from 'react'
-import Board from "../logic/board"
 import './game.css'
-import game, { BLACK, WHITE, getPossibleMoves} from '../logic/game'
+import { BLACK, WHITE, getPossibleMoves } from '../logic/game'
 
 const AVAILABLE = 'available';
 const TIE = 'tie';
@@ -10,7 +9,7 @@ export class RenderGame extends React.Component {
     render() {
         return (
             <div>
-                <Board game={this.props.game}/>
+                <RenderBoard game={this.props.game}/>
             </div>
         );
     }
@@ -20,7 +19,8 @@ export class RenderBoard extends React.Component {
 
     handleClick(row, column) {
         const game = this.props.game;
-        if (game.gameHasEnded()
+
+        if (game.isGameFinished()
             || game.getCurrentPlayer() !== game.blackPlayer
             || !this.isLegalClick(game, row, column)) return;
         // TODO: return if pass is happening
@@ -41,15 +41,22 @@ export class RenderBoard extends React.Component {
         const game = this.props.game;
 
         let value;
-        let isLegal = false;
-        for (const legalCell of getPossibleMoves(game.blackPlayer, game.state.boardState)) {
-            if (legalCell.x === row && legalCell.y === column) {
-                isLegal = true;
-                value = AVAILABLE;
-                break;
+
+        if (game.getCurrentPlayer() !== game.blackPlayer) {
+            value = game.state.boardState[row][column];
+        } else { // check if this is a legal move
+            let isLegal = false;
+            const possibleMoves = getPossibleMoves(game.blackPlayer, game.state.boardState);
+
+            for (const legalCell of possibleMoves) {
+                if (legalCell.x === row && legalCell.y === column) {
+                    isLegal = true;
+                    value = AVAILABLE;
+                    break;
+                }
             }
+            if (!isLegal) value = game.state.boardState[row][column];
         }
-        if (!isLegal) value = game.state.boardState[row][column];
 
         return <Cell value={value}
                      onClick={() => this.handleClick(row, column)} key={`${row}_${column}`}/>;
