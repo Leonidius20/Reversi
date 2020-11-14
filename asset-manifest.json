@@ -1,23 +1,23 @@
 {
   "files": {
     "main.css": "/Reversi/static/css/main.0fc5df3d.chunk.css",
-    "main.js": "/Reversi/static/js/main.704f87aa.chunk.js",
-    "main.js.map": "/Reversi/static/js/main.704f87aa.chunk.js.map",
-    "runtime-main.js": "/Reversi/static/js/runtime-main.34ec1c2d.js",
-    "runtime-main.js.map": "/Reversi/static/js/runtime-main.34ec1c2d.js.map",
-    "static/js/2.c9c30ead.chunk.js": "/Reversi/static/js/2.c9c30ead.chunk.js",
-    "static/js/2.c9c30ead.chunk.js.map": "/Reversi/static/js/2.c9c30ead.chunk.js.map",
-    "static/js/3.6f6d1b8b.chunk.js": "/Reversi/static/js/3.6f6d1b8b.chunk.js",
-    "static/js/3.6f6d1b8b.chunk.js.map": "/Reversi/static/js/3.6f6d1b8b.chunk.js.map",
+    "main.js": "/Reversi/static/js/main.ccdbff29.chunk.js",
+    "main.js.map": "/Reversi/static/js/main.ccdbff29.chunk.js.map",
+    "runtime-main.js": "/Reversi/static/js/runtime-main.7a707f67.js",
+    "runtime-main.js.map": "/Reversi/static/js/runtime-main.7a707f67.js.map",
+    "static/js/2.5b69d99b.chunk.js": "/Reversi/static/js/2.5b69d99b.chunk.js",
+    "static/js/2.5b69d99b.chunk.js.map": "/Reversi/static/js/2.5b69d99b.chunk.js.map",
+    "static/js/3.921ff17c.chunk.js": "/Reversi/static/js/3.921ff17c.chunk.js",
+    "static/js/3.921ff17c.chunk.js.map": "/Reversi/static/js/3.921ff17c.chunk.js.map",
     "index.html": "/Reversi/index.html",
     "static/css/main.0fc5df3d.chunk.css.map": "/Reversi/static/css/main.0fc5df3d.chunk.css.map",
-    "static/js/2.c9c30ead.chunk.js.LICENSE.txt": "/Reversi/static/js/2.c9c30ead.chunk.js.LICENSE.txt",
+    "static/js/2.5b69d99b.chunk.js.LICENSE.txt": "/Reversi/static/js/2.5b69d99b.chunk.js.LICENSE.txt",
     "static/media/logo.103b5fa1.svg": "/Reversi/static/media/logo.103b5fa1.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.34ec1c2d.js",
-    "static/js/2.c9c30ead.chunk.js",
+    "static/js/runtime-main.7a707f67.js",
+    "static/js/2.5b69d99b.chunk.js",
     "static/css/main.0fc5df3d.chunk.css",
-    "static/js/main.704f87aa.chunk.js"
+    "static/js/main.ccdbff29.chunk.js"
   ]
 }
