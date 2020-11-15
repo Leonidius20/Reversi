@@ -1,0 +1,7 @@
+.menu-button {
+    width: 100%;
+    list-style-type: none;
+    line-height: 50px;
+    color: blueviolet;
+    transition: 0.2s;
+}

@@ -52,25 +52,23 @@ class HeuristicAiPlayer extends AiPlayer {
 
     nextMove(boardState) {
         //todo replace node with { state, value, move }
-        const result = this.minmax(0,
-            {
-                boardState: boardState,
-                value: null,
-                move: null,
-            }, this.color);
-
         return new Promise((resolve) => {
-            setTimeout(() => {
+            const result = this.minmax(0,
+                {
+                    boardState: boardState,
+                    value: null,
+                    move: null,
+                }, this.color, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY);
+            //setTimeout(() => {
                 resolve(result.move);
-            }, 2000);
+            //}, 2000);
         });
     }
 
     // returns the best node with value and move filled
-    minmax(currentDepth, node, currentColor) {
-
-        // todo: actually find min and max values
-        // instead of whatever the hell is going on in here
+    // alpha - best value for minimizing player so far
+    // beta - best value for maximizing player so far
+    minmax(currentDepth, node, currentColor, alpha, beta) {
         if (currentDepth === this.maxDepth || this.isTerminalState(node)) {
             node.value = this.heuristic(this.color, node.boardState);
             return node;
@@ -81,7 +79,7 @@ class HeuristicAiPlayer extends AiPlayer {
         let bestMove = null;
 
         for (const move of getPossibleMoves({color: currentColor}, node.boardState)) {
-            const newBoardState = applyMove(node.boardState, currentColor, move);
+            const newBoardState = applyMove(node.boardState, currentColor, move, alpha, beta);
 
             const newEvaluatedNode = this.minmax(currentDepth + 1, {
                 boardState: newBoardState,
@@ -89,12 +87,25 @@ class HeuristicAiPlayer extends AiPlayer {
                 move, // this move is made by alternating players!
             }, !currentColor);
 
-            if ((currentColor === WHITE && bestValue < newEvaluatedNode.value)
-                || (currentColor === BLACK && bestValue > newEvaluatedNode.value)) {
+            if (currentColor === WHITE && bestValue < newEvaluatedNode.value) {
                 bestValue = newEvaluatedNode.value;
                 bestNode = newEvaluatedNode;
                 bestMove = move;
+                alpha = Math.max(alpha, bestValue);
+                if (beta <= alpha) {
+                    break;
+                }
+            } else if (currentColor === BLACK && bestValue > newEvaluatedNode.value) {
+                bestValue = newEvaluatedNode.value;
+                bestNode = newEvaluatedNode;
+                bestMove = move;
+                beta = Math.min(beta, bestValue);
+                if (beta <= alpha) {
+                    break;
+                }
             }
+
+
         }
 
         if (bestNode === null) {
@@ -120,14 +131,7 @@ class HeuristicAiPlayer extends AiPlayer {
             if (hasEmptyCells) break;
         }
 
-        if (!hasEmptyCells) return true;
-
-        // two consecutive passes
-        /*return getPossibleMoves({color: BLACK}, this.boardState).length === 0
-            && getPossibleMoves({color: WHITE}, this.boardState).length === 0;*/
-
-        // return getPossibleMoves({color: WHITE}, node.boardState).length === 0;
-        return false;
+        return !hasEmptyCells;
     }
 
 }

@@ -8,6 +8,10 @@ export default function App() {
     const blackPlayer = new HumanPlayer(BLACK);
     const whitePlayer = new GreedyAiPlayer(WHITE);
 
+
+
+
+
   return (
     <div className="App">
       <Game blackPlayer={blackPlayer} whitePlayer={whitePlayer}/>
