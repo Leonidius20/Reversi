@@ -25,7 +25,8 @@ export class RenderBoard extends React.Component {
             || !this.isLegalClick(game, row, column)) return;
         // TODO: return if pass is happening
 
-        game.blackPlayer.makeMove({x: row, y: column});
+        // game.blackPlayer.makeMove({x: row, y: column});
+        game.makeHumanMove({x: row, y: column});
     }
 
     isLegalClick(game, row, column) {

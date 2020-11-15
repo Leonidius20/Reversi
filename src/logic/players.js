@@ -13,14 +13,10 @@ export class HumanPlayer extends Player {
         this.resolvePromise(move);
     }
 
-    nextMove(boardState) {
-        if (getPossibleMoves(this, boardState).length === 0) {
-            return Promise.resolve(null);
+    triggerMove(game) {
+        if (getPossibleMoves(this, game.state.boardState).length === 0) {
+            game.makeHumanMove(null);
         }
-
-        return new Promise(((resolve) => {
-            this.resolvePromise = resolve;
-        }));
     }
 
 }
@@ -29,15 +25,13 @@ class AiPlayer extends Player {}
 
 export class RandomAiPlayer extends AiPlayer {
 
-    nextMove(boardState) {
-        const moves = getPossibleMoves(this, boardState);
-        return new Promise((resolve) => {
-            setTimeout(() => {
-                resolve(moves.length === 0
-                    ? null
-                    : moves[Math.floor(Math.random() * moves.length)]);
-            }, 2000);
-        });
+    triggerMove(game) {
+        setTimeout(() => {
+            const moves = getPossibleMoves(this, game.state.boardState);
+            game.computerMove(moves.length === 0
+                ? null
+                : moves[Math.floor(Math.random() * moves.length)]);
+        }, 2000);
     }
 
 }
@@ -50,19 +44,16 @@ class HeuristicAiPlayer extends AiPlayer {
         this.maxDepth = maxDepth;
     }
 
-    nextMove(boardState) {
-        //todo replace node with { state, value, move }
-        return new Promise((resolve) => {
+    triggerMove(game) {
+        setTimeout(() => {
             const result = this.minmax(0,
                 {
-                    boardState: boardState,
+                    boardState: game.state.boardState,
                     value: null,
                     move: null,
                 }, this.color, Number.NEGATIVE_INFINITY, Number.POSITIVE_INFINITY);
-            //setTimeout(() => {
-                resolve(result.move);
-            //}, 2000);
-        });
+            game.computerMove(result.move);
+        }, 2000);
     }
 
     // returns the best node with value and move filled
@@ -70,7 +61,7 @@ class HeuristicAiPlayer extends AiPlayer {
     // beta - best value for maximizing player so far
     minmax(currentDepth, node, currentColor, alpha, beta) {
         if (currentDepth === this.maxDepth || this.isTerminalState(node)) {
-            node.value = this.heuristic(this.color, node.boardState);
+            node.value = this.heuristic(this.color, node.boardState, node.move);
             return node;
         }
 
@@ -110,7 +101,7 @@ class HeuristicAiPlayer extends AiPlayer {
 
         if (bestNode === null) {
             bestNode = node;
-            bestValue = this.heuristic(this.color, node.boardState);
+            bestValue = this.heuristic(this.color, node.boardState, node.move);
         }
 
         bestNode.value = bestValue;
@@ -139,8 +130,28 @@ class HeuristicAiPlayer extends AiPlayer {
 export class GreedyAiPlayer extends HeuristicAiPlayer {
 
     constructor(color) {
-        super((color, boardState) => utilityFunction(color, boardState),
-            color, 6);
+        super((color, boardState, move) => utilityFunction(color, boardState),
+            color, 4);
     }
 
+}
+
+const biasTable = [
+    [4, 1, 2, 1, 1, 2, 1, 4],
+    [1, 1, 2, 1, 1, 2, 1, 1],
+    [2, 2, 2, 1, 1, 2, 2, 2],
+    [1, 1, 1, 1, 1, 1, 1, 1],
+    [1, 1, 1, 1, 1, 1, 1, 1],
+    [2, 2, 2, 1, 1, 2, 2, 2],
+    [1, 1, 2, 1, 1, 2, 1, 1],
+    [4, 1, 2, 1, 1, 2, 1, 4],
+];
+
+export class ImprovedAiPlayer extends HeuristicAiPlayer {
+    constructor(color) {
+        super((color, boardState, move) => {
+            if (move === null) return utilityFunction(color, boardState);
+            else return utilityFunction(color, boardState) * biasTable[move.x][move.y];
+        }, color, 4);
+    }
 }

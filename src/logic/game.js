@@ -13,7 +13,8 @@ export default class Game extends React.Component {
         this.blackPlayer = props.blackPlayer;
         this.whitePlayer = props.whitePlayer;
         this.state = Game.getInitialState();
-        this.gameLoop();
+        // this.gameLoop();
+        this.blackPlayer.triggerMove(this);
     }
 
     static getInitialState() {
@@ -61,7 +62,6 @@ export default class Game extends React.Component {
 
     async pass() {
         return new Promise((resolve => {
-            const playerWhoPassed = this.getCurrentPlayer();
             this.setState((prevState) => {
                 return {
                     turnCounter: prevState.turnCounter + 1,
@@ -73,7 +73,7 @@ export default class Game extends React.Component {
         }));
     }
 
-    async gameLoop() {
+    /*async gameLoop() {
         while (!this.isGameFinished()) {
             const player = this.getCurrentPlayer();
             const move = await player.nextMove(this.state.boardState);
@@ -86,6 +86,32 @@ export default class Game extends React.Component {
             consecutivePasses: 0,
             winner: this.getWinner(),
         });
+    }*/
+
+    async makeHumanMove(move) {
+        if (move == null) {
+            await this.pass();
+        } else {
+            this.registerMove(this.blackPlayer, move);
+            if (!this.isGameFinished()) {
+                this.whitePlayer.triggerMove(this);
+            } else this.setState({
+                consecutivePasses: 0,
+                winner: this.getWinner(),
+            });
+        }
+    }
+
+    async computerMove(move) {
+        if (move == null) {
+            await this.pass();
+        } else {
+            this.registerMove(this.whitePlayer, move);
+            if (this.isGameFinished()) this.setState({
+                consecutivePasses: 0,
+                winner: this.getWinner(),
+            });
+        }
     }
 
     getWinner() {
