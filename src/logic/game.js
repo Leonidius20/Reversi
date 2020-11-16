@@ -93,13 +93,13 @@ export default class Game extends React.Component {
             await this.pass();
         } else {
             this.registerMove(this.blackPlayer, move);
-            if (!this.isGameFinished()) {
-                this.whitePlayer.triggerMove(this);
-            } else this.setState({
-                consecutivePasses: 0,
-                winner: this.getWinner(),
-            });
         }
+        if (!this.isGameFinished()) {
+            this.whitePlayer.triggerMove(this);
+        } else this.setState({
+            consecutivePasses: 0,
+            winner: this.getWinner(),
+        });
     }
 
     async computerMove(move) {
@@ -107,11 +107,11 @@ export default class Game extends React.Component {
             await this.pass();
         } else {
             this.registerMove(this.whitePlayer, move);
-            if (this.isGameFinished()) this.setState({
-                consecutivePasses: 0,
-                winner: this.getWinner(),
-            });
         }
+        if (this.isGameFinished()) this.setState({
+            consecutivePasses: 0,
+            winner: this.getWinner(),
+        });
     }
 
     getWinner() {
